@@ -67,6 +67,8 @@ Vagrant.configure(2) do |config|
      sudo apt-get update
      sudo apt-get install -y apache2
      sudo apt-get install git
+     sudo apt-get install xterm
+     sudo apt-get install wireshark
      sudo apt-get install mininet/precise-backports
      module-assistant auto-install openvswitch-datapath
    SHELL
