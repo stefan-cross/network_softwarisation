@@ -10,21 +10,16 @@ Vagrant.configure(2) do |config|
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
 
-  # Login 
-  # config.ssh.username = 'root'
-  # config.ssh.password = 'vagrant'
-  # config.ssh.insert_key = 'true'
-
   # Enable X11
   config.ssh.forward_x11 = true
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "precise64"
+  config.vm.box = "opentuned"
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
-  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+  config.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vbox.box"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -72,12 +67,24 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
     config.vm.provision "shell", inline: <<-SHELL
+
+     echo "Apt updates..."
      sudo apt-get update
      sudo apt-get install -y apache2
      sudo apt-get install git
+    
+     echo "Checking out examples..." 
+     git clone https://github.com/mininet/mininet.git
+     cd mininet
+     git filter-branch --subdirectory-filter examples
+    
+     echo "Installing mininet and components..."
      sudo apt-get install xterm
-     sudo apt-get install wireshark
-     sudo apt-get install mininet/precise-backports
-     module-assistant auto-install openvswitch-datapath
+     sudo apt-get install mininet
+     sudo service openvswitch-controller stop
+     sudo update-rc.d openvswitch-controller disable
+     sudo apt-get install liblldpctl-dev
+     sudo apt-get install ovsdbmonitor
+     sudo mn --test pingall
    SHELL
 end
