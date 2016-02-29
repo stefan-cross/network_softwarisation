@@ -20,7 +20,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "ubuntu_15.10_wily_werewolf.box"
+  config.vm.box = "opentuned/ubuntu_15.10_wily_werewolf"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -72,8 +72,22 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   sudo apt-get update
-  #   sudo apt-get install -y apache2
-  # SHELL
+    config.vm.provision "shell", inline: <<-SHELL
+        sudo apt-get update
+        sudo apt-get install git
+        sudo apt-get install python
+        sudo apt-get pip
+        sudo apt-get install mininet
+        sudo service openvswitch-controller stop
+        sudo update-rc.d openvswitch-controller disable
+        sudo mn --test pingall
+        sudo dpkg-reconfigure openvswitch-datapath-dkms
+        sudo service openflow-switch restart
+        sudo add-apt-repository ppa:gns3/ppa
+        sudo apt-get update
+        sudo apt-get install gns3-gui
+        sudo mkdir /opentuned
+        cd opentuned
+        git clone https://github.com/stefan-cross/network_softwarisation.git
+    SHELL
 end
